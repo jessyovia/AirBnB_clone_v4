@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" Starts a Flash Web Application """
+""" Starts a Flask Web Application """
 from models import storage
 from models.state import State
 from models.city import City
@@ -7,6 +7,8 @@ from models.amenity import Amenity
 from models.place import Place
 from os import environ
 from flask import Flask, render_template
+import uuid  # Import the uuid module
+
 app = Flask(__name__)
 # app.jinja_env.trim_blocks = True
 # app.jinja_env.lstrip_blocks = True
@@ -18,7 +20,7 @@ def close_db(error):
     storage.close()
 
 
-@app.route('/hbnb', strict_slashes=False)
+@app.route('/0-hbnb/', strict_slashes=False)  # Update the route to /0-hbnb/
 def hbnb():
     """ HBNB is alive! """
     states = storage.all(State).values()
@@ -34,10 +36,12 @@ def hbnb():
     places = storage.all(Place).values()
     places = sorted(places, key=lambda k: k.name)
 
-    return render_template('/0-hbnb/',
+    # Add cache_id variable to render_template function
+    return render_template('/0-hbnb.html',  # Use /0-hbnb.html as the template
                            states=st_ct,
                            amenities=amenities,
-                           places=places)
+                           places=places,
+                           cache_id=str(uuid.uuid4()))  # Add cache_id as a query string
 
 
 if __name__ == "__main__":
